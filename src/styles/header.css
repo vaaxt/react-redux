@@ -1,0 +1,27 @@
+.header{
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc; 
+}
+
+.header-inner{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo{
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.theme-btn{
+    margin-left: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+}

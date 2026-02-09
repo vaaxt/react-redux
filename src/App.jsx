@@ -1,23 +1,34 @@
-import Header from "../src/components/header";
-import Footer from "../src/components/footer";
-import Home from "./pages/home";
-import { useSelector } from 'react-redux'; 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App(){
-  const message = useSelector(state => state.ui.message);
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import InstrumentsList from "./pages/instrumentsList.jsx";
+import InstrumentDetail from "./pages/instrumentsDetail.jsx";
+import Home from "./pages/home.jsx";
 
-  return(
-    <>
-      <Header/>
-      
-      <div style={{textAlign: 'center', padding: '20px'}}>
-        <h2>{message}</h2>
-      </div>
-      
-      <Home />
-      <Footer />
-    </>
-  )
+function App() {
+  return (
+    <BrowserRouter>
+  <Header />
+  
+  <Routes>
+    <Route path="/" element={<InstrumentsList />} />
+    <Route path="/instruments/:id" element={<InstrumentDetail />} />
+  </Routes>
+  
+  <Footer />
+</BrowserRouter>
+
+  );
 }
 
 export default App;
+
+
+
+
+
+
+
+
+

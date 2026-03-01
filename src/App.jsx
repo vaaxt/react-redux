@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import InstrumentsList from "./pages/instrumentsList.jsx";
 import InstrumentDetail from "./pages/instrumentsDetail.jsx";
 import Home from "./pages/home.jsx";
+import Counter from "./pages/counter.jsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
   <Routes>
     <Route path="/" element={<InstrumentsList />} />
     <Route path="/instruments/:id" element={<InstrumentDetail />} />
+    <Route path="/counter" element={<Counter />}  />
   </Routes>
   
   <Footer />

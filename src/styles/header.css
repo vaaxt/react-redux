@@ -7,21 +7,85 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .logo{
     font-size: 24px;
     font-weight: bold;
+    white-space: nowrap;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    margin: 0 20px;
 }
 
 .nav a {
-    margin-left: 20px;
     text-decoration: none;
     font-weight: 500;
+    white-space: nowrap;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
 }
 
 .theme-btn{
-    margin-left: 20px;
     padding: 6px 12px;
     cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-email {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.logout-btn {
+    padding: 6px 12px;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-login {
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.btn-register {
+    padding: 6px 12px;
+    background-color: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    display: inline-block;
 }

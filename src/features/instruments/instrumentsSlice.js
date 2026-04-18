@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { fetchInstrumentsApi, fetchInstrumentByIdApi } from "../../api/instrumentsApi";
 
 // 📃 Загрузка списка
@@ -55,6 +55,36 @@ const instrumentsSlice = createSlice({
     reducers: {
         clearSelectedInstrument(state) {
             state.selectedInstrument = null;
+        },
+        toggleLike(state, action) {
+            const instrument = state.items.find(item => item.id === action.payload);
+            if (instrument) {
+                instrument.likes = !instrument.likes;
+            }
+            if (state.selectedInstrument?.id === action.payload) {
+                state.selectedInstrument.likes = !state.selectedInstrument.likes;
+            }
+        },
+        toggleFavorite(state, action) {
+            const instrument = state.items.find(item => item.id === action.payload);
+            if (instrument) {
+                instrument.isFavorite = !instrument.isFavorite;
+            }
+            if (state.selectedInstrument?.id === action.payload) {
+                state.selectedInstrument.isFavorite = !state.selectedInstrument.isFavorite;
+            }
+        },
+        addRating(state, action) {
+            const { id, rating } = action.payload;
+            const instrument = state.items.find(item => item.id === id);
+            if (instrument) {
+                if (!instrument.ratings) instrument.ratings = [];
+                instrument.ratings.push(rating);
+            }
+            if (state.selectedInstrument?.id === id) {
+                if (!state.selectedInstrument.ratings) state.selectedInstrument.ratings = [];
+                state.selectedInstrument.ratings.push(rating);
+            }
         }
     },
     extraReducers: (builder) => {
@@ -65,7 +95,12 @@ const instrumentsSlice = createSlice({
             })
             .addCase(fetchInstruments.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.items = action.payload;
+                state.items = action.payload.map(item => ({
+                    ...item,
+                    likes: item.likes || false,
+                    isFavorite: item.isFavorite || false,
+                    ratings: item.ratings || []
+                }));
             })
             .addCase(fetchInstruments.rejected, (state, action) => {
                 state.status = "failed";
@@ -78,7 +113,12 @@ const instrumentsSlice = createSlice({
             })
             .addCase(fetchInstrumentById.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.selectedInstrument = action.payload;
+                state.selectedInstrument = {
+                    ...action.payload,
+                    likes: action.payload.likes || false,
+                    isFavorite: action.payload.isFavorite || false,
+                    ratings: action.payload.ratings || []
+                };
             })
             .addCase(fetchInstrumentById.rejected, (state, action) => {
                 state.status = "failed";
@@ -137,7 +177,22 @@ const instrumentsSlice = createSlice({
 
             
 
-export const { clearSelectedInstrument, clearStatuses } = instrumentsSlice.actions;
+export const { clearSelectedInstrument, clearStatuses, toggleLike, toggleFavorite, addRating } = instrumentsSlice.actions;
+
+// Selector для средней оценки инструмента
+export const selectAverageRating = createSelector(
+    (state) => state.instruments.items,
+    (state, instrumentId) => instrumentId,
+    (items, instrumentId) => {
+        const instrument = items.find(item => item.id === instrumentId);
+        if (instrument && instrument.ratings && instrument.ratings.length > 0) {
+            const sum = instrument.ratings.reduce((a, b) => a + b, 0);
+            return sum / instrument.ratings.length;
+        }
+        return 0;
+    }
+);
+
 export default instrumentsSlice.reducer;
 
 

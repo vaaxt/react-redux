@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchInstruments } from "../features/instruments/instrumentsSlice";
+import { fetchInstruments, deleteInstrument, toggleLike, toggleFavorite } from "../features/instruments/instrumentsSlice";
 import { useNavigate } from "react-router-dom";
 import InstrumentForm from "../components/instrumentForm";
 
@@ -38,6 +38,16 @@ const InstrumentsList = () => {
     setEditingInstrument(null);
   };
 
+  const handleToggleLike = (id, e) => {
+    e.stopPropagation();
+    dispatch(toggleLike(id));
+  };
+
+  const handleToggleFavorite = (id, e) => {
+    e.stopPropagation();
+    dispatch(toggleFavorite(id));
+  };
+
   if (status === "loading") return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
 
@@ -65,6 +75,18 @@ const InstrumentsList = () => {
                 <p style={styles.description}>{inst.description}</p>
               </div>
               <div style={styles.actions}>
+                <button 
+                  onClick={(e) => handleToggleLike(inst.id, e)}
+                  style={inst.likes ? styles.likedButton : styles.likeButton}
+                >
+                  {inst.likes ? '❤️' : '🤍'}
+                </button>
+                <button 
+                  onClick={(e) => handleToggleFavorite(inst.id, e)}
+                  style={inst.isFavorite ? styles.favoritedButton : styles.favoriteButton}
+                >
+                  {inst.isFavorite ? '⭐' : '☆'}
+                </button>
                 <button 
                   onClick={(e) => handleEdit(inst, e)}
                   style={styles.editButton}
@@ -137,6 +159,34 @@ const styles = {
   actions: {
     display: 'flex',
     gap: 5
+  },
+  likeButton: {
+    padding: '5px 10px',
+    background: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  likedButton: {
+    padding: '5px 10px',
+    background: '#ffcccc',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  favoriteButton: {
+    padding: '5px 10px',
+    background: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  favoritedButton: {
+    padding: '5px 10px',
+    background: '#ffffcc',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
   },
   editButton: {
     padding: '5px 10px',

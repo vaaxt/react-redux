@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchInstrumentById, clearSelectedInstrument } from "../features/instruments/instrumentsSlice";
+import { fetchInstrumentById, clearSelectedInstrument, toggleLike, toggleFavorite, addRating, selectAverageRating, deleteInstrument } from "../features/instruments/instrumentsSlice";
 import InstrumentForm from "../components/instrumentForm";
 
 const InstrumentDetail = () => {
@@ -9,7 +9,9 @@ const InstrumentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { selectedInstrument, status } = useSelector(state => state.instruments);
+  const averageRating = useSelector(state => selectAverageRating(state, id));
   const [showEditForm, setShowEditForm] = useState(false);
+  const [rating, setRating] = useState(5);
 
   useEffect(() => {
     dispatch(fetchInstrumentById(id));
@@ -20,6 +22,18 @@ const InstrumentDetail = () => {
       await dispatch(deleteInstrument(id));
       navigate('/');
     }
+  };
+
+  const handleToggleLike = () => {
+    dispatch(toggleLike(id));
+  };
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(id));
+  };
+
+  const handleAddRating = () => {
+    dispatch(addRating({ id, rating: parseInt(rating) }));
   };
 
   if (status === "loading") return <p>Загрузка инструмента...</p>;
@@ -59,6 +73,28 @@ const InstrumentDetail = () => {
         <p><b>Тип:</b> {selectedInstrument.type}</p>
         <p><b>Описание:</b> {selectedInstrument.description}</p>
         <p><b>Цена:</b> ${selectedInstrument.price}</p>
+        <p><b>Средняя оценка:</b> {averageRating.toFixed(1)} ⭐</p>
+        
+        <div style={styles.interactions}>
+          <button onClick={handleToggleLike} style={selectedInstrument.likes ? styles.likedButton : styles.likeButton}>
+            {selectedInstrument.likes ? '❤️ Лайкнуто' : '🤍 Лайк'}
+          </button>
+          <button onClick={handleToggleFavorite} style={selectedInstrument.isFavorite ? styles.favoritedButton : styles.favoriteButton}>
+            {selectedInstrument.isFavorite ? '⭐ В избранном' : '☆ Добавить в избранное'}
+          </button>
+        </div>
+        
+        <div style={styles.ratingSection}>
+          <label>Оценить: </label>
+          <select value={rating} onChange={(e) => setRating(e.target.value)}>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5</option>
+          </select>
+          <button onClick={handleAddRating} style={styles.rateButton}>Оценить</button>
+        </div>
       </div>
 
       {showEditForm && (
@@ -118,6 +154,51 @@ const styles = {
     border: '1px solid #ddd',
     borderRadius: 8,
     padding: 20
+  },
+  interactions: {
+    display: 'flex',
+    gap: 10,
+    marginTop: 10
+  },
+  likeButton: {
+    padding: '8px 16px',
+    background: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  likedButton: {
+    padding: '8px 16px',
+    background: '#ffcccc',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  favoriteButton: {
+    padding: '8px 16px',
+    background: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  favoritedButton: {
+    padding: '8px 16px',
+    background: '#ffffcc',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer'
+  },
+  ratingSection: {
+    marginTop: 10
+  },
+  rateButton: {
+    padding: '8px 16px',
+    background: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: 4,
+    cursor: 'pointer',
+    marginLeft: 10
   }
 };
 
